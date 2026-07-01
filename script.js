@@ -56,9 +56,13 @@ const music = document.getElementById("bgMusic");
 const musicBtn = document.getElementById("musicBtn");
 
 // Autoplay browsers block audio with sound; we allow user click to unmute.
-music.muted = true;
+music.muted = false;
 
-let playing = false;
+// Try to autoplay (may still be blocked by browser; user can unmute with the button)
+music.play().catch(() => {});
+
+let playing = !music.paused;
+
 
 musicBtn.addEventListener("click", () => {
 
@@ -175,39 +179,63 @@ function typeLetter() {
 
 const photos = [
 
-    "assets/photo1.jpg",
-
-    "assets/photo2.jpg",
-
-    "assets/photo3.jpg",
-
-    "assets/photo4.jpg"
-
+    {
+        src: "asset/you.jpeg",
+        caption: "Every moment with you is special ❤️",
+    },
+    {
+        src: "asset/me and you.jpeg",
+        caption: "Through thick and thin, we keep going ❤️",
+    },
+    {
+        src: "asset/WhatsApp Image 2026-07-01 at 8.45.59 PM.jpeg",
+        caption: "My heart smiles every time I remember you ❤️",
+    },
 ];
 
 let current = 0;
 
-const gallery = document.getElementById("galleryImage");
+const captionEl = document.getElementById("galleryCaption");
+
+const galleryImages = [
+    document.getElementById("galleryImage1"),
+    document.getElementById("galleryImage2"),
+    document.getElementById("galleryImage3"),
+];
+
+// Initialize: show first image, hide the rest
+galleryImages.forEach((img, idx) => {
+    if (!img) return;
+    img.style.display = idx === current ? "block" : "none";
+});
+
+if (captionEl && photos[current]) {
+    captionEl.textContent = photos[current].caption;
+}
 
 setInterval(() => {
-
     current++;
+    if (current >= photos.length) current = 0;
 
-    if (current >= photos.length) {
+    // Toggle images
+    galleryImages.forEach((img, idx) => {
+        if (!img) return;
+        const shouldShow = idx === current;
+        img.style.display = shouldShow ? "block" : "none";
 
-        current = 0;
+        if (shouldShow) {
+            img.classList.remove("fadeImage");
+            void img.offsetWidth;
+            img.classList.add("fadeImage");
+        }
+    });
 
+    if (captionEl && photos[current]) {
+        captionEl.textContent = photos[current].caption;
     }
-
-    gallery.classList.remove("fadeImage");
-
-    void gallery.offsetWidth;
-
-    gallery.classList.add("fadeImage");
-
-    gallery.src = photos[current];
-
 }, 4000);
+
+
 
 
 
